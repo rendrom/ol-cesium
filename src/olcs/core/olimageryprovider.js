@@ -2,6 +2,7 @@ goog.provide('olcs.core.OLImageryProvider');
 
 goog.require('ol.events');
 goog.require('ol.proj');
+goog.require('ol.source.TileImage');
 goog.require('olcs.util');
 
 
@@ -248,6 +249,7 @@ olcs.core.OLImageryProvider.prototype.getTileCredits = function(x, y, level) {
  */
 olcs.core.OLImageryProvider.prototype.requestImage = function(x, y, level) {
   const tileUrlFunction = this.source_.getTileUrlFunction();
+  const tileLoadFunction = this.source_.getTileLoadFunction();
   if (tileUrlFunction && this.projection_) {
 
     // Perform mapping of Cesium tile coordinates to OpenLayers tile coordinates:
@@ -260,6 +262,10 @@ olcs.core.OLImageryProvider.prototype.requestImage = function(x, y, level) {
         [z_, x, y_], 1, this.projection_);
     if (this.proxy_) {
       url = this.proxy_.getURL(url);
+    }
+    if (tileLoadFunction !== ol.source.TileImage.defaultTileLoadFunction) {
+      console.log(tileLoadFunction);
+      url = tileLoadFunction.call(this.source_, null, url);
     }
     return url ? Cesium.ImageryProvider.loadImage(this, url) : this.emptyCanvas_;
   } else {

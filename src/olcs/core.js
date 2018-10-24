@@ -5,7 +5,7 @@ goog.require('goog.asserts');
 goog.require('ol.layer.Tile');
 goog.require('ol.layer.Image');
 goog.require('ol.proj');
-goog.require('ol.source.Image');
+// goog.require('ol.source.Image');
 goog.require('ol.source.ImageWMS');
 goog.require('ol.source.TileImage');
 goog.require('ol.source.TileWMS');
@@ -392,8 +392,7 @@ olcs.core.tileLayerToImageryLayer = function(olLayer, viewProj) {
   let source = olLayer.getSource();
 
   // Convert ImageWMS to TileWMS
-  if (source instanceof ol.source.ImageWMS && source.getUrl() &&
-    source.getImageLoadFunction() === ol.source.Image.defaultImageLoadFunction) {
+  if (source instanceof ol.source.ImageWMS && source.getUrl()) {
     const sourceProps = {
       'olcs.proxy': source.get('olcs.proxy'),
       'olcs.extent': source.get('olcs.extent'),
@@ -405,7 +404,8 @@ olcs.core.tileLayerToImageryLayer = function(olLayer, viewProj) {
       attributions: source.getAttributions(),
       projection: source.getProjection(),
       logo: source.getLogo(),
-      params: source.getParams()
+      params: source.getParams(),
+      tileLoadFunction: source.getImageLoadFunction()
     });
     source.setProperties(sourceProps);
   }
